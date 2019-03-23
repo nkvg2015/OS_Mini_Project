@@ -1,0 +1,74 @@
+#include<stdio.h>
+
+int execution[20]; // saving all ended process
+int n,i,j;    // n: process count, i&j are iteraror
+int at[20],bt[20],id[20],status[20];
+
+void round_robin(int i,int quantum) //function_overloaded
+{ 
+  bt[i]=bt[i]-quantum; 
+}
+
+void fcfs(int i) //first_come_first_serve func
+{ 
+  bt[i]=0; 
+}
+
+int main()
+{
+  printf("Enter number of Processes:\n");
+  scanf("%d",&n);
+
+  for(i=0;i<n;i++)
+   {
+    id[i]=i+1;  //generatint id number
+    printf("Enter arrival time ");
+    scanf("%d",&at[i]);  // getting arriving time
+    printf("Enter Burst time ");
+    scanf("%d",&bt[i]); // getting burst time
+    status[i]=0;  // initially no process is in ready queue
+   }
+ int time=0,ex=0;
+for(i=0;i<n;i++)
+  {
+   /* for loop for setting up status....it will put all process to ready queue whose arrival_time < time(0) */
+   for(j=i;j<n;j++)
+    if(at[j]<=time)
+     status[j]=1;
+ if(status[i]==1)
+  {
+   if(bt[i]>8)
+    { time=time+8; round_robin(i,8); }
+   else
+    { time=time+bt[i]; round_robin(i,bt[i]);  execution[ex]=i;  ex++; }
+  }
+ } // for loop with qunatum_8 closed 
+for(i=0;i<n;i++)
+{
+ for(j=i;j<n;j++)
+  if(at[j]<=time)
+    status[j]=1;
+if(bt[i]!=0)
+ {
+  if(bt[i]>16)
+    { time=time+16; round_robin(i,16); }
+  else if(bt[i]<16 && bt[i]>0)
+    { time=time+bt[i]; round_robin(i,bt[i]);  execution[ex]=i; ex++; }
+ }
+} // for loop with time quantum_16
+
+for(i=0;i<n;i++)
+{
+if(bt[i]!=0)
+ {
+   fcfs(i);
+   execution[ex]=i;  ex++;
+ }
+}
+
+printf("Order of process Execution: \n");
+for(j=0;j<ex;j++)
+  printf("p%d\n",execution[j]);
+
+return 0;
+}
